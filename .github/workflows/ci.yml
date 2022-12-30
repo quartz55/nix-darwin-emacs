@@ -8,7 +8,7 @@ on:
 jobs:
   refresh-overlay:
     name: Refresh inputs
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     if: github.repository_owner == 'c4710n'
     steps:
     - name: Checkout repository
