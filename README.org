@@ -48,10 +48,6 @@ Daily generations of Elpa.
 **** Melpa / Melpa stable
 Daily generations of Melpa & Melpa stable attribute sets.
 
-**** EXWM & needed dependencies
-This overlay provides fresh versions of EXWM and dependencies. This is
-updated daily.
-
 *** =emacs= overlay
 
 **** Emacs from Git and latest (including pre-releases)
@@ -163,11 +159,6 @@ just fetching the tarball of latest master on rebuild.
 This has side-effects if packages breaks or things like that you may want
 to be in control of which revision of the overlay you run.
 
-Adding the overlay this way will extend your Emacs packages set to contain
-the latest EXWM and dependencies from their respective master and make the
-package =emacsGit= available. These of course change quite rapidly and will
-cause compilation time.
-
 #+BEGIN_SRC nix
 {
   nixpkgs.overlays = [
@@ -198,5 +189,5 @@ package directly from the overlay. For example, you can install
 ** Matrix chat
 [[https://matrix.to/#/#emacs:nixos.org][Nix Emacs]]
 
-#  LocalWords:  EXWM NixOS emacsGit
+#  LocalWords:  NixOS emacsGit
 #  LocalWords:  SRC nixpkgs builtins fetchTarball url
