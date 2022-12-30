@@ -5,7 +5,8 @@ let
       (import ../default.nix)
     ];
   };
-in {
+in
+{
   inherit (pkgs) emacsUnstable emacsUnstable-nox;
   inherit (pkgs) emacsGit emacsGit-nox;
   inherit (pkgs) emacsPgtk;

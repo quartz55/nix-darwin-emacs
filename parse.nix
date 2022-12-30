@@ -69,12 +69,12 @@ let
   #     :hook (emacs-lisp-mode lisp-mode lisp-interaction-mode))
   # ''
   # => [ "direnv" "paredit" ]
-  parsePackagesFromUsePackage = {
-    configText
+  parsePackagesFromUsePackage =
+    { configText
     , alwaysEnsure ? false
     , isOrgModeFile ? false
     , alwaysTangle ? false
-  }:
+    }:
     let
       readFunction =
         if isOrgModeFile then
@@ -83,71 +83,71 @@ let
           fromElisp;
 
       find = item: list:
-        if list == [] then [] else
-          if builtins.head list == item then
-            list
-          else
-            find item (builtins.tail list);
+        if list == [ ] then [ ] else
+        if builtins.head list == item then
+          list
+        else
+          find item (builtins.tail list);
 
       getKeywordValue = keyword: list:
         let
           keywordList = find keyword list;
         in
-          if keywordList != [] then
-            let
-              keywordValue = builtins.tail keywordList;
-            in
-              if keywordValue != [] then
-                builtins.head keywordValue
-              else
-                true
+        if keywordList != [ ] then
+          let
+            keywordValue = builtins.tail keywordList;
+          in
+          if keywordValue != [ ] then
+            builtins.head keywordValue
           else
-            null;
+            true
+        else
+          null;
 
       isDisabled = item:
         let
           disabledValue = getKeywordValue ":disabled" item;
         in
-          if disabledValue == [] then
-            false
-          else if builtins.isBool disabledValue then
-            disabledValue
-          else if builtins.isString disabledValue then
-            true
-          else
-            false;
+        if disabledValue == [ ] then
+          false
+        else if builtins.isBool disabledValue then
+          disabledValue
+        else if builtins.isString disabledValue then
+          true
+        else
+          false;
 
       getName = item:
         let
           ensureValue = getKeywordValue ":ensure" item;
           usePackageName = builtins.head (builtins.tail item);
         in
-          if builtins.isString ensureValue then
-            if lib.hasPrefix ":" ensureValue then
-              usePackageName
-            else
-              ensureValue
-          else if ensureValue == true || (ensureValue == null && alwaysEnsure) then
+        if builtins.isString ensureValue then
+          if lib.hasPrefix ":" ensureValue then
             usePackageName
           else
-            [];
+            ensureValue
+        else if ensureValue == true || (ensureValue == null && alwaysEnsure) then
+          usePackageName
+        else
+          [ ];
 
       recurse = item:
-        if builtins.isList item && item != [] then
+        if builtins.isList item && item != [ ] then
           let
             packageManager = builtins.head item;
           in
-            if builtins.elem packageManager [ "use-package" "leaf" ] then
-              if !(isDisabled item) then
-                [ packageManager (getName item) ] ++ map recurse item
-              else
-                []
+          if builtins.elem packageManager [ "use-package" "leaf" ] then
+            if !(isDisabled item) then
+              [ packageManager (getName item) ] ++ map recurse item
             else
-              map recurse item
+              [ ]
+          else
+            map recurse item
         else
-          [];
+          [ ];
     in
-      lib.flatten (map recurse (readFunction configText));
+    lib.flatten (map recurse (readFunction configText));
 
 in
 {

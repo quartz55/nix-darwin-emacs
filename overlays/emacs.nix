@@ -29,34 +29,38 @@ let
 
               # fixes segfaults that only occur on aarch64-linux (issue#264)
               configureFlags = old.configureFlags ++
-                               super.lib.optionals (super.stdenv.isLinux && super.stdenv.isAarch64)
-                                 [ "--enable-check-lisp-object-type" ];
+                super.lib.optionals (super.stdenv.isLinux && super.stdenv.isAarch64)
+                  [ "--enable-check-lisp-object-type" ];
 
               postPatch = old.postPatch + ''
                 substituteInPlace lisp/loadup.el \
                 --replace '(emacs-repository-get-version)' '"${repoMeta.rev}"' \
                 --replace '(emacs-repository-get-branch)' '"master"'
               '' +
-              # XXX: remove when https://github.com/NixOS/nixpkgs/pull/193621 is merged
+                # XXX: remove when https://github.com/NixOS/nixpkgs/pull/193621 is merged
                 (super.lib.optionalString (old ? NATIVE_FULL_AOT)
-                    (let backendPath = (super.lib.concatStringsSep " "
-                      (builtins.map (x: ''\"-B${x}\"'') [
-                        # Paths necessary so the JIT compiler finds its libraries:
-                        "${super.lib.getLib self.libgccjit}/lib"
-                        "${super.lib.getLib self.libgccjit}/lib/gcc"
-                        "${super.lib.getLib self.stdenv.cc.libc}/lib"
+                  (
+                    let
+                      backendPath = (super.lib.concatStringsSep " "
+                        (builtins.map (x: ''\"-B${x}\"'') [
+                          # Paths necessary so the JIT compiler finds its libraries:
+                          "${super.lib.getLib self.libgccjit}/lib"
+                          "${super.lib.getLib self.libgccjit}/lib/gcc"
+                          "${super.lib.getLib self.stdenv.cc.libc}/lib"
 
-                        # Executable paths necessary for compilation (ld, as):
-                        "${super.lib.getBin self.stdenv.cc.cc}/bin"
-                        "${super.lib.getBin self.stdenv.cc.bintools}/bin"
-                        "${super.lib.getBin self.stdenv.cc.bintools.bintools}/bin"
-                      ]));
-                     in ''
-                        substituteInPlace lisp/emacs-lisp/comp.el --replace \
-                            "(defcustom comp-libgccjit-reproducer nil" \
-                            "(setq native-comp-driver-options '(${backendPath}))
-(defcustom comp-libgccjit-reproducer nil"
-                    ''));
+                          # Executable paths necessary for compilation (ld, as):
+                          "${super.lib.getBin self.stdenv.cc.cc}/bin"
+                          "${super.lib.getBin self.stdenv.cc.bintools}/bin"
+                          "${super.lib.getBin self.stdenv.cc.bintools.bintools}/bin"
+                        ]));
+                    in
+                    ''
+                                              substituteInPlace lisp/emacs-lisp/comp.el --replace \
+                                                  "(defcustom comp-libgccjit-reproducer nil" \
+                                                  "(setq native-comp-driver-options '(${backendPath}))
+                      (defcustom comp-libgccjit-reproducer nil"
+                    ''
+                  ));
             }
           )
         )
@@ -109,18 +113,19 @@ let
               tree-sitter-typescript
               tree-sitter-yaml
             ];
-            tree-sitter-grammars = super.runCommandCC "tree-sitter-grammars" {}
-              (super.lib.concatStringsSep "\n" (["mkdir -p $out/lib"] ++ (map linkCmd plugins)));
-          in {
+            tree-sitter-grammars = super.runCommandCC "tree-sitter-grammars" { }
+              (super.lib.concatStringsSep "\n" ([ "mkdir -p $out/lib" ] ++ (map linkCmd plugins)));
+          in
+          {
             buildInputs = old.buildInputs ++ [ self.pkgs.tree-sitter tree-sitter-grammars ];
             TREE_SITTER_LIBS = "-ltree-sitter";
             # Add to list of directories dlopen/dynlib_open searches for tree sitter languages *.so/*.dylib.
             postFixup = old.postFixup + super.lib.optionalString self.stdenv.isDarwin ''
-                install_name_tool -add_rpath ${super.lib.makeLibraryPath [ tree-sitter-grammars ]} $out/bin/emacs
-                /usr/bin/codesign -s - -f $out/bin/emacs
-              '' + super.lib.optionalString self.stdenv.isLinux ''
-                ${self.pkgs.patchelf}/bin/patchelf --add-rpath ${super.lib.makeLibraryPath [ tree-sitter-grammars ]} $out/bin/emacs
-              '';
+              install_name_tool -add_rpath ${super.lib.makeLibraryPath [ tree-sitter-grammars ]} $out/bin/emacs
+              /usr/bin/codesign -s - -f $out/bin/emacs
+            '' + super.lib.optionalString self.stdenv.isLinux ''
+              ${self.pkgs.patchelf}/bin/patchelf --add-rpath ${super.lib.makeLibraryPath [ tree-sitter-grammars ]} $out/bin/emacs
+            '';
           }
         )
       )));

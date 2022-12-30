@@ -1,6 +1,6 @@
 /*
-Parse an emacs package file to derive packages from
-Package-Requires declarations.
+  Parse an emacs package file to derive packages from
+  Package-Requires declarations.
 */
 
 { pkgs }:
@@ -18,9 +18,9 @@ let
   emacsWithPackages = emacsPackages.emacsWithPackages;
 in
 emacsWithPackages (epkgs:
-  let
-    overriden = override epkgs;
-    usePkgs = builtins.map (name: overriden.${name}) packages;
-    extraPkgs = extraEmacsPackages overriden;
-  in
-  [ overriden.use-package ] ++ usePkgs ++ extraPkgs)
+let
+  overriden = override epkgs;
+  usePkgs = builtins.map (name: overriden.${name}) packages;
+  extraPkgs = extraEmacsPackages overriden;
+in
+[ overriden.use-package ] ++ usePkgs ++ extraPkgs)

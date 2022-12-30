@@ -1,36 +1,36 @@
 { nixpkgs, declInput }:
 let
-  pkgs = import nixpkgs {};
+  pkgs = import nixpkgs { };
 
-  mkJobset = {
-    nixpkgsRelease
+  mkJobset =
+    { nixpkgsRelease
     , nixFile
     , descriptionNote
-  }: {
-    enabled = 1;
-    hidden = false;
-    description = "Emacs-overlay jobset for nixpkgs branch ${nixpkgsRelease} (${descriptionNote})";
-    nixexprinput = "src";
-    nixexprpath = "hydra/${nixFile}";
-    checkinterval = 1800;
-    schedulingshares = 100;
-    enableemail = false;
-    emailoverride = "";
-    keepnr = 3;
-    type = 0;  # Non-flake (legacy)
-    inputs = {
-      src = {
-        type = "git";
-        value = "https://github.com/nix-community/emacs-overlay.git";
-        emailresponsible = false;
-      };
-      nixpkgs = {
-        type = "git";
-        value = "https://github.com/NixOS/nixpkgs.git ${nixpkgsRelease}";
-        emailresponsible = false;
+    }: {
+      enabled = 1;
+      hidden = false;
+      description = "Emacs-overlay jobset for nixpkgs branch ${nixpkgsRelease} (${descriptionNote})";
+      nixexprinput = "src";
+      nixexprpath = "hydra/${nixFile}";
+      checkinterval = 1800;
+      schedulingshares = 100;
+      enableemail = false;
+      emailoverride = "";
+      keepnr = 3;
+      type = 0; # Non-flake (legacy)
+      inputs = {
+        src = {
+          type = "git";
+          value = "https://github.com/nix-community/emacs-overlay.git";
+          emailresponsible = false;
+        };
+        nixpkgs = {
+          type = "git";
+          value = "https://github.com/NixOS/nixpkgs.git ${nixpkgsRelease}";
+          emailresponsible = false;
+        };
       };
     };
-  };
 
   jobsets = {
 
@@ -84,8 +84,9 @@ let
 
   };
 
-in {
-  jobsets = pkgs.runCommand "spec.json" {} ''
+in
+{
+  jobsets = pkgs.runCommand "spec.json" { } ''
     cat <<EOF
     ${builtins.toXML declInput}
     EOF

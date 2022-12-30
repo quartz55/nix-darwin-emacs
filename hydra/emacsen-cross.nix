@@ -11,13 +11,13 @@ in
 lib.fold lib.recursiveUpdate { }
   (builtins.map
     (target:
-      let
-        targetPkgs = pkgs.pkgsCross.${target};
-      in
-      lib.mapAttrs' (name: job: lib.nameValuePair "${name}-${target}" job)
-        ({
-          inherit (targetPkgs) emacsUnstable emacsUnstable-nox;
-          inherit (targetPkgs) emacsGit emacsGit-nox;
-          inherit (targetPkgs) emacsPgtk;
-        }))
+    let
+      targetPkgs = pkgs.pkgsCross.${target};
+    in
+    lib.mapAttrs' (name: job: lib.nameValuePair "${name}-${target}" job)
+      ({
+        inherit (targetPkgs) emacsUnstable emacsUnstable-nox;
+        inherit (targetPkgs) emacsGit emacsGit-nox;
+        inherit (targetPkgs) emacsPgtk;
+      }))
     crossTargets)
