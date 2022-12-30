@@ -20,7 +20,6 @@
       let
         pkgs = import nixpkgs {
           inherit system;
-          config.allowAliases = false;
           overlays = [ self.overlays.default ];
         };
         inherit (pkgs) lib;

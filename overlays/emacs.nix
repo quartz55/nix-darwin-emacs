@@ -130,63 +130,16 @@ let
         )
       )));
 
-  emacsGit = mkGitEmacs "emacs-git" ../repos/emacs/emacs-master.json { withSQLite3 = true; withWebP = true; };
-
-  emacsPgtk = mkGitEmacs "emacs-pgtk" ../repos/emacs/emacs-master.json { withSQLite3 = true; withWebP = true; withPgtk = true; };
-
-  emacsUnstable = (mkGitEmacs "emacs-unstable" ../repos/emacs/emacs-unstable.json { noTreeSitter = true; });
-
-  emacsLsp = (mkGitEmacs "emacs-lsp" ../repos/emacs/emacs-lsp.json { noTreeSitter = true; });
 
 in
 {
-  inherit emacsGit emacsUnstable;
-
-  inherit emacsPgtk;
-
-  emacsGit-nox = (
-    (
-      emacsGit.override {
-        withNS = false;
-        withX = false;
-        withGTK2 = false;
-        withGTK3 = false;
-        withWebP = false;
-      }
-    ).overrideAttrs (
-      oa: {
-        name = "${oa.name}-nox";
-      }
-    )
-  );
-
-  emacsUnstable-nox = (
-    (
-      emacsUnstable.override {
-        withNS = false;
-        withX = false;
-        withGTK2 = false;
-        withGTK3 = false;
-        withWebP = false;
-      }
-    ).overrideAttrs (
-      oa: {
-        name = "${oa.name}-nox";
-      }
-    )
-  );
-
-  inherit emacsLsp;
+  emacsGit = mkGitEmacs "emacs-git" ../repos/emacs/emacs-master.json {
+    withSQLite3 = true;
+    withWebP = true;
+  };
 
   emacsWithPackagesFromUsePackage = import ../elisp.nix { pkgs = self; };
 
   emacsWithPackagesFromPackageRequires = import ../packreq.nix { pkgs = self; };
 
-} // super.lib.optionalAttrs (super.config.allowAliases or true) {
-  emacsGcc = builtins.trace "emacsGcc has been renamed to emacsGit, please update your expression." emacsGit;
-  emacsGitNativeComp = builtins.trace "emacsGitNativeComp has been renamed to emacsGit, please update your expression." emacsGit;
-  emacsGitTreeSitter = builtins.trace "emacsGitTreeSitter has been renamed to emacsGit, please update your expression." emacsGit;
-  emacsNativeComp = builtins.trace "emacsNativeComp has been renamed to emacsUnstable, please update your expression." emacsUnstable;
-  emacsPgtkGcc = builtins.trace "emacsPgtkGcc has been renamed to emacsPgtk, please update your expression." emacsPgtk;
-  emacsPgtkNativeComp = builtins.trace "emacsPgtkNativeComp has been renamed to emacsPgtk, please update your expression." emacsPgtk;
 }
