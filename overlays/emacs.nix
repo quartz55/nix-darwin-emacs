@@ -16,7 +16,7 @@ let
       super.emacs
       ([
 
-        (drv: drv.override ({ srcRepo = true; } // builtins.removeAttrs args [ "noTreeSitter" ]))
+        (drv: drv.override ({ srcRepo = true; } // args))
 
         (
           drv: drv.overrideAttrs (
@@ -26,11 +26,6 @@ let
               src = fetcher (builtins.removeAttrs repoMeta [ "type" "version" ]);
 
               patches = [ ];
-
-              # fixes segfaults that only occur on aarch64-linux (issue#264)
-              configureFlags = old.configureFlags ++
-                super.lib.optionals (super.stdenv.isLinux && super.stdenv.isAarch64)
-                  [ "--enable-check-lisp-object-type" ];
 
               postPatch = old.postPatch + ''
                 substituteInPlace lisp/loadup.el \
@@ -77,60 +72,54 @@ let
           in
           result
         )
-      ]
-      ++ (super.lib.optional (! (args ? "noTreeSitter")) (
-        drv: drv.overrideAttrs (old:
-          let
-            libName = drv: super.lib.removeSuffix "-grammar" drv.pname;
-            libSuffix = if super.stdenv.isDarwin then "dylib" else "so";
-            lib = drv: ''lib${libName drv}.${libSuffix}'';
-            linkCmd = drv:
-              if super.stdenv.isDarwin
-              then ''cp ${drv}/parser .
-                     chmod +w ./parser
-                     install_name_tool -id $out/lib/${lib drv} ./parser
-                     cp ./parser $out/lib/${lib drv}
-                     /usr/bin/codesign -s - -f $out/lib/${lib drv}
-                ''
-              else ''ln -s ${drv}/parser $out/lib/${lib drv}'';
-            plugins = with self.pkgs.tree-sitter-grammars; [
-              tree-sitter-bash
-              tree-sitter-c
-              tree-sitter-c-sharp
-              tree-sitter-cmake
-              tree-sitter-cpp
-              tree-sitter-css
-              tree-sitter-dockerfile
-              tree-sitter-go
-              tree-sitter-gomod
-              tree-sitter-java
-              tree-sitter-python
-              tree-sitter-javascript
-              tree-sitter-json
-              tree-sitter-rust
-              tree-sitter-toml
-              tree-sitter-tsx
-              tree-sitter-typescript
-              tree-sitter-yaml
-            ];
-            tree-sitter-grammars = super.runCommandCC "tree-sitter-grammars" { }
-              (super.lib.concatStringsSep "\n" ([ "mkdir -p $out/lib" ] ++ (map linkCmd plugins)));
-          in
-          {
-            buildInputs = old.buildInputs ++ [ self.pkgs.tree-sitter tree-sitter-grammars ];
-            TREE_SITTER_LIBS = "-ltree-sitter";
-            # Add to list of directories dlopen/dynlib_open searches for tree sitter languages *.so/*.dylib.
-            postFixup = old.postFixup + super.lib.optionalString self.stdenv.isDarwin ''
-              install_name_tool -add_rpath ${super.lib.makeLibraryPath [ tree-sitter-grammars ]} $out/bin/emacs
-              /usr/bin/codesign -s - -f $out/bin/emacs
-            '' + super.lib.optionalString self.stdenv.isLinux ''
-              ${self.pkgs.patchelf}/bin/patchelf --add-rpath ${super.lib.makeLibraryPath [ tree-sitter-grammars ]} $out/bin/emacs
-            '';
-          }
+
+        (
+          drv: drv.overrideAttrs (old:
+            let
+              libName = drv: super.lib.removeSuffix "-grammar" drv.pname;
+              lib = drv: ''lib${libName drv}.dylib'';
+              linkCmd = drv: ''
+                cp ${drv}/parser .
+                chmod +w ./parser
+                install_name_tool -id $out/lib/${lib drv} ./parser
+                cp ./parser $out/lib/${lib drv}
+                /usr/bin/codesign -s - -f $out/lib/${lib drv}
+              '';
+              plugins = with self.pkgs.tree-sitter-grammars; [
+                tree-sitter-bash
+                tree-sitter-c
+                tree-sitter-c-sharp
+                tree-sitter-cmake
+                tree-sitter-cpp
+                tree-sitter-css
+                tree-sitter-dockerfile
+                tree-sitter-go
+                tree-sitter-gomod
+                tree-sitter-java
+                tree-sitter-python
+                tree-sitter-javascript
+                tree-sitter-json
+                tree-sitter-rust
+                tree-sitter-toml
+                tree-sitter-tsx
+                tree-sitter-typescript
+                tree-sitter-yaml
+              ];
+              tree-sitter-grammars = super.runCommandCC "tree-sitter-grammars" { }
+                (super.lib.concatStringsSep "\n" ([ "mkdir -p $out/lib" ] ++ (map linkCmd plugins)));
+            in
+            {
+              buildInputs = old.buildInputs ++ [ self.pkgs.tree-sitter tree-sitter-grammars ];
+              TREE_SITTER_LIBS = "-ltree-sitter";
+              # Add to list of directories dlopen/dynlib_open searches for tree sitter languages *.so/*.dylib.
+              postFixup = old.postFixup + ''
+                install_name_tool -add_rpath ${super.lib.makeLibraryPath [ tree-sitter-grammars ]} $out/bin/emacs
+                /usr/bin/codesign -s - -f $out/bin/emacs
+              '';
+            }
+          )
         )
-      )));
-
-
+      ]);
 in
 {
   emacsGit = mkGitEmacs "emacs-git" ../repos/emacs/emacs-master.json {
