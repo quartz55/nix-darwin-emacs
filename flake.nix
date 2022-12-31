@@ -10,12 +10,9 @@
     }: {
       # self: super: must be named final: prev: for `nix flake check` to be happy
       overlays = {
-        default = final: prev: import ./overlays final prev;
+        default = final: prev: import ./overlays/emacs.nix final prev;
         emacs = final: prev: import ./overlays/emacs.nix final prev;
-        package = final: prev: import ./overlays/package.nix final prev;
       };
-      # for backward compatibility, is safe to delete, not referenced anywhere
-      overlay = self.overlays.default;
     } // flake-utils.lib.eachDefaultSystem (system: (
       let
         pkgs = import nixpkgs {
@@ -24,7 +21,6 @@
         };
         inherit (pkgs) lib;
         overlayAttrs = builtins.attrNames (import ./. pkgs pkgs);
-
       in
       {
         packages =
