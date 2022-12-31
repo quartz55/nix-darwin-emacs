@@ -25,7 +25,21 @@ let
               inherit (repoMeta) version;
               src = fetcher (builtins.removeAttrs repoMeta [ "type" "version" ]);
 
-              patches = [ ];
+              patches = [
+                ./patches/no-frame-refocus-cocoa.patch
+
+                # GNU Emacs's main role is an AXTextField instead of AXWindow, it has to be fixed manually.
+                # The patches is borrowed from https://github.com/d12frosted/homebrew-emacs-plus/blob/f3c16d68bbf52c1779be279579d124d726f0d04a/patches/emacs-28/
+                ./patches/fix-window-role.patch
+
+                ./patches/system-appearance.patch
+                ./patches/poll.patch
+                ./patches/round-undecorated-frame.patch
+              ];
+
+              postInstall = old.postInstall + ''
+                cp ${./icons/memeplex-wide.icns} $out/Applications/Emacs.app/Contents/Resources/Emacs.icns
+              '';
 
               postPatch = old.postPatch + ''
                 substituteInPlace lisp/loadup.el \
@@ -104,6 +118,9 @@ let
                 tree-sitter-tsx
                 tree-sitter-typescript
                 tree-sitter-yaml
+                tree-sitter-elixir
+                tree-sitter-heex
+                tree-sitter-eex
               ];
               tree-sitter-grammars = super.runCommandCC "tree-sitter-grammars" { }
                 (super.lib.concatStringsSep "\n" ([ "mkdir -p $out/lib" ] ++ (map linkCmd plugins)));
@@ -111,7 +128,7 @@ let
             {
               buildInputs = old.buildInputs ++ [ self.pkgs.tree-sitter tree-sitter-grammars ];
               TREE_SITTER_LIBS = "-ltree-sitter";
-              # Add to list of directories dlopen/dynlib_open searches for tree sitter languages *.so/*.dylib.
+              # Add to list of directories dlopen/dynlib_open searches for tree sitter languages *.dylib.
               postFixup = old.postFixup + ''
                 install_name_tool -add_rpath ${super.lib.makeLibraryPath [ tree-sitter-grammars ]} $out/bin/emacs
                 /usr/bin/codesign -s - -f $out/bin/emacs
