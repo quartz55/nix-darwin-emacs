@@ -18,9 +18,6 @@ jobs:
       uses: cachix/install-nix-action@v18
       with:
         nix_path: nixpkgs=channel:nixpkgs-unstable
-        extra_nix_config: |
-          sandbox = relaxed
-    - run: cat /etc/nix/nix.conf
 
     - name: Configure Git
       run: |
