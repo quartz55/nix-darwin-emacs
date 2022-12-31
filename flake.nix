@@ -1,7 +1,10 @@
 {
   description = "A nix overlay for bleeding edge Emacs on macOS.";
 
-  inputs.flake-utils.url = "github:numtide/flake-utils";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-22.11-darwin";
+    flake-utils.url = "github:numtide/flake-utils";
+  };
 
   outputs =
     { self
@@ -19,15 +22,9 @@
           inherit system;
           overlays = [ self.overlays.default ];
         };
-        inherit (pkgs) lib;
-        overlayAttrs = builtins.attrNames (import ./. pkgs pkgs);
       in
       {
-        packages =
-          let
-            drvAttrs = builtins.filter (n: lib.isDerivation pkgs.${n}) overlayAttrs;
-          in
-          lib.listToAttrs (map (n: lib.nameValuePair n pkgs.${n}) drvAttrs);
+        packages.default = pkgs.emacsGit;
       }
     ));
 
