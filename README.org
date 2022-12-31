@@ -1,9 +1,13 @@
 #+TITLE: nix-darwin-emacs
 
-* Basic functionality
+#+begin_quote
+A nix overlay for bleeding edge Emacs on Darwin (the kernel of macOS).
+#+end_quote
+
+* basic functionality
 This overlay provides a package =emacsGit= which is built from the latest =master= branch.
 
-* Extra library functionality
+* extra library functionality
 This overlay comes with extra functions to generate an Emacs closure
 from various types of dependency declaration. (These are abstractions
 on top of =emacsWithPackages=.)
@@ -12,57 +16,57 @@ For example, =emacsWithPackagesFromUsePackage= adds packages which are
 required in a user's config via =use-package= or =leaf=.
 
 #+BEGIN_SRC nix
-  {
-    environment.systemPackages = [
-      (emacsWithPackagesFromUsePackage {
-        # Your Emacs config file. Org mode babel files are also
-        # supported.
-        # NB: Config files cannot contain unicode characters, since
-        #     they're being parsed in nix, which lacks unicode
-        #     support.
-        # config = ./emacs.org;
-        config = ./emacs.el;
+{
+  environment.systemPackages = [
+    (emacsWithPackagesFromUsePackage {
+      # Your Emacs config file. Org mode babel files are also
+      # supported.
+      # NB: Config files cannot contain unicode characters, since
+      #     they're being parsed in nix, which lacks unicode
+      #     support.
+      # config = ./emacs.org;
+      config = ./emacs.el;
 
-        # Whether to include your config as a default init file.
-        # If being bool, the value of config is used.
-        # Its value can also be a derivation like this if you want to do some
-        # substitution:
-        #   defaultInitFile = pkgs.substituteAll {
-        #     name = "default.el";
-        #     src = ./emacs.el;
-        #     inherit (config.xdg) configHome dataHome;
-        #   };
-        defaultInitFile = true;
+      # Whether to include your config as a default init file.
+      # If being bool, the value of config is used.
+      # Its value can also be a derivation like this if you want to do some
+      # substitution:
+      #   defaultInitFile = pkgs.substituteAll {
+      #     name = "default.el";
+      #     src = ./emacs.el;
+      #     inherit (config.xdg) configHome dataHome;
+      #   };
+      defaultInitFile = true;
 
-        # Package is optional, defaults to pkgs.emacs
-        package = pkgs.emacsGit;
+      # Package is optional, defaults to pkgs.emacs
+      package = pkgs.emacsGit;
 
-        # By default emacsWithPackagesFromUsePackage will only pull in
-        # packages with `:ensure`, `:ensure t` or `:ensure <package name>`.
+      # By default emacsWithPackagesFromUsePackage will only pull in
+      # packages with `:ensure`, `:ensure t` or `:ensure <package name>`.
 
-        # For Org mode babel files, by default only code blocks with
-        # `:tangle yes` are considered. Setting `alwaysTangle` to `true`
-        # will include all code blocks missing the `:tangle` argument,
-        # defaulting it to `yes`.
-        # Note that this is NOT recommended unless you have something like
-        # `#+PROPERTY: header-args:emacs-lisp :tangle yes` in your config,
-        # which defaults `:tangle` to `yes`.
-        alwaysTangle = true;
+      # For Org mode babel files, by default only code blocks with
+      # `:tangle yes` are considered. Setting `alwaysTangle` to `true`
+      # will include all code blocks missing the `:tangle` argument,
+      # defaulting it to `yes`.
+      # Note that this is NOT recommended unless you have something like
+      # `#+PROPERTY: header-args:emacs-lisp :tangle yes` in your config,
+      # which defaults `:tangle` to `yes`.
+      alwaysTangle = true;
 
-        # Optionally provide extra packages not in the configuration file.
-        extraEmacsPackages = epkgs: [
-          epkgs.cask
-        ];
+      # Optionally provide extra packages not in the configuration file.
+      extraEmacsPackages = epkgs: [
+        epkgs.cask
+      ];
 
-        # Optionally override derivations.
-        override = epkgs: epkgs // {
-          weechat = epkgs.melpaPackages.weechat.overrideAttrs(old: {
-            patches = [ ./weechat-el.patch ];
-          });
-        };
-      })
-    ];
-  }
+      # Optionally override derivations.
+      override = epkgs: epkgs // {
+        weechat = epkgs.melpaPackages.weechat.overrideAttrs(old: {
+          patches = [ ./weechat-el.patch ];
+        });
+      };
+    })
+  ];
+}
 #+END_SRC
 
 Similarly, =emacsWithPackagesFromPackageRequires= adds packages which
@@ -70,7 +74,7 @@ are declared in a =.el= package file's =Package-Requires= header, which
 can be handy for CI purposes:
 
 #+BEGIN_SRC nix
-...
+# ...
 let
   emacsForCI = pkgs.emacsWithPackagesFromPackageRequires {
     packageElisp = builtins.readFile ./flycheck.el;
