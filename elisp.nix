@@ -7,15 +7,10 @@
 let
   parse = pkgs.callPackage ./parse.nix { };
   inherit (pkgs) lib;
-
-
-
 in
 { config
   # bool to use the value of config or a derivation whose name is default.el
 , defaultInitFile ? false
-  # emulate `use-package-always-ensure` behavior (defaulting to false)
-, alwaysEnsure ? null
   # emulate `#+PROPERTY: header-args:emacs-lisp :tangle yes`
 , alwaysTangle ? false
 , extraEmacsPackages ? epkgs: [ ]
@@ -23,17 +18,6 @@ in
 , override ? (epkgs: epkgs)
 }:
 let
-  ensureNotice = ''
-    Emacs-overlay API breakage notice:
-
-    Previously emacsWithPackagesFromUsePackage always added every use-package definition to the closure.
-    Now we will only add packages with `:ensure`, `:ensure t` or `:ensure <package name>`.
-
-    You can get back the old behaviour by passing `alwaysEnsure = true`.
-    For a more in-depth usage example see https://github.com/nix-community/emacs-overlay#extra-library-functionality
-  '';
-  doEnsure = if (alwaysEnsure == null) then builtins.trace ensureNotice false else alwaysEnsure;
-
   configType = config:
     if (lib.strings.isStorePath config) then "path"
     else (builtins.typeOf config);
@@ -55,15 +39,12 @@ let
 
   packages = parse.parsePackagesFromUsePackage {
     inherit configText isOrgModeFile alwaysTangle;
-    alwaysEnsure = doEnsure;
+    alwaysEnsure = false;
   };
   emacsPackages = pkgs.emacsPackagesFor package;
   emacsWithPackages = emacsPackages.emacsWithPackages;
   mkPackageError = name:
-    let
-      errorFun = if (alwaysEnsure != null && alwaysEnsure) then builtins.trace else throw;
-    in
-    errorFun "Emacs package ${name}, declared wanted with use-package, not found." null;
+    throw "Emacs package ${name}, declared wanted with use-package, not found." null;
 in
 emacsWithPackages (epkgs:
 let
