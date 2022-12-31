@@ -25,11 +25,11 @@ let
               inherit (repoMeta) version;
               src = fetcher (builtins.removeAttrs repoMeta [ "type" "version" ]);
 
+              # https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches
               patches = [
                 ./patches/no-frame-refocus-cocoa.patch
 
                 # GNU Emacs's main role is an AXTextField instead of AXWindow, it has to be fixed manually.
-                # The patches is borrowed from https://github.com/d12frosted/homebrew-emacs-plus/blob/f3c16d68bbf52c1779be279579d124d726f0d04a/patches/emacs-28/
                 ./patches/fix-window-role.patch
 
                 ./patches/system-appearance.patch
