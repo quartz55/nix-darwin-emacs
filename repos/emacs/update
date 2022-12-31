@@ -22,5 +22,3 @@ function update_savannah_branch() {
 }
 
 update_savannah_branch master
-
-nix-build --no-out-link --show-trace ./test.nix
