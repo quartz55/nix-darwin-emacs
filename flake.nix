@@ -1,5 +1,5 @@
 {
-  description = "Bleeding edge Emacs overlay";
+  description = "A nix overlay for bleeding edge Emacs on macOS.";
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
 

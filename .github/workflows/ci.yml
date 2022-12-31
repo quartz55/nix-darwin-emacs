@@ -1,4 +1,4 @@
-name: Update emacs-overlay
+name: update repos
 
 on:
   schedule:
