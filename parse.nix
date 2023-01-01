@@ -137,7 +137,7 @@ let
           let
             packageManager = builtins.head item;
           in
-          if builtins.elem packageManager [ "use-package" "leaf" ] then
+          if builtins.elem packageManager [ "use-package" ] then
             if !(isDisabled item) then
               [ packageManager (getName item) ] ++ map recurse item
             else
