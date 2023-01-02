@@ -1,7 +1,7 @@
 #+TITLE: nix-darwin-emacs
 
 #+begin_quote
-A nix overlay for bleeding edge Emacs on Darwin (the kernel of macOS).
+A nix overlay for bleeding edge Emacs on Darwin (the heart of macOS).
 #+end_quote
 
 * basic functionality
