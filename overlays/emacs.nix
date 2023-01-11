@@ -128,21 +128,8 @@ let
             in
             {
               buildInputs = old.buildInputs ++ [ self.pkgs.tree-sitter tree-sitter-grammars ];
-
-              # before building the `.el` files, we need to allow the `tree-sitter` libraries
-              # bundled in emacs to be dynamically loaded.
-              TREE_SITTER_LIBS = super.lib.concatStringsSep " " ([ "-ltree-sitter" ] ++ (map linkerFlag plugins));
-
-              # Add to directories that tree-sitter looks in for language definitions / shared object parsers
-              # https://git.savannah.gnu.org/cgit/emacs.git/tree/src/treesit.c?h=64044f545add60e045ff16a9891b06f429ac935f#n533
-              # appends a bunch of filenames that appear to be incorrectly skipped over
-              # in https://git.savannah.gnu.org/cgit/emacs.git/tree/src/treesit.c?h=64044f545add60e045ff16a9891b06f429ac935f#n567
-              # on macOS
-              postPatch = old.postPatch + ''
-                substituteInPlace src/treesit.c \
-                --replace "Vtreesit_extra_load_path = Qnil;" \
-                          "Vtreesit_extra_load_path = list1 ( build_string ( \"${tree-sitter-grammars}/lib\" ) );"
-              '';
+              buildFlags = "LDFLAGS=-Wl,-rpath,${super.lib.makeLibraryPath [tree-sitter-grammars]}";
+              TREE_SITTER_LIBS = "-ltree-sitter";
             }
           )
         )
