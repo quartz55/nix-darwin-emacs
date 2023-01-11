@@ -101,27 +101,32 @@ let
               '';
               linkerFlag = drv: "-l" + libName drv;
               plugins = with self.pkgs.tree-sitter-grammars; [
+                tree-sitter-elixir
+                tree-sitter-heex
+                tree-sitter-eex
+
+                tree-sitter-css
+                tree-sitter-javascript
+                tree-sitter-typescript
+                tree-sitter-tsx
+
+                tree-sitter-json
+                tree-sitter-yaml
+                tree-sitter-toml
+
                 tree-sitter-bash
                 tree-sitter-c
                 tree-sitter-c-sharp
                 tree-sitter-cmake
                 tree-sitter-cpp
-                tree-sitter-css
-                tree-sitter-dockerfile
                 tree-sitter-go
                 tree-sitter-gomod
                 tree-sitter-java
                 tree-sitter-python
-                tree-sitter-javascript
-                tree-sitter-json
+                tree-sitter-ruby
                 tree-sitter-rust
-                tree-sitter-toml
-                tree-sitter-tsx
-                tree-sitter-typescript
-                tree-sitter-yaml
-                tree-sitter-elixir
-                tree-sitter-heex
-                tree-sitter-eex
+
+                tree-sitter-dockerfile
               ];
               tree-sitter-grammars = super.runCommandCC "tree-sitter-grammars" { }
                 (super.lib.concatStringsSep "\n" ([ "mkdir -p $out/lib" ] ++ (map linkCmd plugins)));
