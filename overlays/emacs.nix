@@ -3,13 +3,7 @@ let
   mkGitEmacs = namePrefix: jsonFile: { ... }@args:
     let
       repoMeta = super.lib.importJSON jsonFile;
-      fetcher =
-        if repoMeta.type == "savannah" then
-          super.fetchFromSavannah
-        else if repoMeta.type == "github" then
-          super.fetchFromGitHub
-        else
-          throw "Unknown repository type ${repoMeta.type}!";
+      fetcher = super.fetchFromSavannah;
     in
     builtins.foldl'
       (drv: fn: fn drv)
