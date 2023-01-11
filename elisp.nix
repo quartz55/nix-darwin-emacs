@@ -14,7 +14,7 @@ in
   # emulate `#+PROPERTY: header-args:emacs-lisp :tangle yes`
 , alwaysTangle ? false
 , extraEmacsPackages ? epkgs: [ ]
-, package ? pkgs.emacs
+, package ? pkgs.emacsGit
 , override ? (epkgs: epkgs)
 }:
 let

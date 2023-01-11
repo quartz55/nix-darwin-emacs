@@ -9,7 +9,7 @@ let
 in
 { packageElisp
 , extraEmacsPackages ? epkgs: [ ]
-, package ? pkgs.emacs
+, package ? pkgs.emacsGit
 , override ? (epkgs: epkgs)
 }:
 let
