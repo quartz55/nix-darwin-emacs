@@ -11,18 +11,16 @@ This overlay provides a package =emacsGit= which is:
 + embellished by [[https://github.com/d12frosted/homebrew-emacs-plus/issues/419#issuecomment-966735773][icon provided by memeplex]].
 
 * emacs packages
-
 This overlay doesn't provide any other emacs packages, such as:
-+ melpaStablePackages
-+ melpaPackages
-+ elpaPackages
++ =melpaStablePackages.*=
++ =melpaPackages.*=
++ =elpaPackages.*=
 + ...
 
-If you need them, try to use overlay `package` provided by [nix-community/emacs-overlay](https://github.com/nix-community/emacs-overlay).
+If you need them, try to use overlay ~package~ provided by [[https://github.com/nix-community/emacs-overlay][nix-community/emacs-overlay]].
 
 * an example using Flake
-
-```nix
+#+begin_src nix
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-22.11-darwin";
@@ -70,7 +68,7 @@ If you need them, try to use overlay `package` provided by [nix-community/emacs-
       };
     };
 }
-```
+#+end_src
 
 * extra library functionality
 This overlay comes with extra functions to generate an Emacs closure from various types of dependency declaration. (These are abstractions on top of =emacsWithPackages=.)
@@ -156,3 +154,6 @@ pkgs.mkShell {
   buildInputs = [ emacsForCI ];
 }
 #+end_src
+
+* License
+MIT
