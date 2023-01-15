@@ -4,14 +4,15 @@
 A nix overlay for bleeding edge Emacs on Darwin (the heart of macOS).
 #+end_quote
 
-* emacsGit
+* About this overlay
+** bleeding edge Emacs
 This overlay provides a package =emacsGit= which is:
 + built from the latest =master= branch.
 + patched with [[https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches][patches from homebrew-emacs-plus]].
 + embellished by [[https://github.com/d12frosted/homebrew-emacs-plus/issues/419#issuecomment-966735773][icon provided by memeplex]].
 
-* emacs packages
-This overlay doesn't provide any other emacs packages, such as:
+** other Emacs packages
+This overlay doesn't provide any other Emacs packages, such as:
 + =melpaStablePackages.*=
 + =melpaPackages.*=
 + =elpaPackages.*=
@@ -19,7 +20,18 @@ This overlay doesn't provide any other emacs packages, such as:
 
 If you need them, try to use overlay ~package~ provided by [[https://github.com/nix-community/emacs-overlay][nix-community/emacs-overlay]].
 
-* an example using Flake
+* Quick Start
+First, build it:
+#+begin_src sh
+$ nix build .#
+#+end_src
+
+Then, explore the directory =result=:
+#+begin_src sh
+$ ls ./result
+#+end_src
+
+* An example using Flake
 #+begin_src nix
 {
   inputs = {
@@ -70,7 +82,7 @@ If you need them, try to use overlay ~package~ provided by [[https://github.com/
 }
 #+end_src
 
-* extra library functionality
+* Extra library functionality
 This overlay comes with extra functions to generate an Emacs closure from various types of dependency declaration. (These are abstractions on top of =emacsWithPackages=.)
 
 For example, =emacsWithPackagesFromUsePackage= adds packages which are required in a user's config via =use-package=.
