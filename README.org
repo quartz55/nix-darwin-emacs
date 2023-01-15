@@ -11,6 +11,10 @@ This overlay provides a package =emacsGit= which is:
 + patched with [[https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches][patches from homebrew-emacs-plus]].
 + embellished by [[https://github.com/d12frosted/homebrew-emacs-plus/issues/419#issuecomment-966735773][icon provided by memeplex]].
 
+#+begin_quote
+And, this is the only package provided by this overlay.
+#+end_quote
+
 ** other Emacs packages
 This overlay doesn't provide any other Emacs packages, such as:
 + =melpaStablePackages.*=
@@ -62,7 +66,7 @@ $ ls ./result
     }: {
       darwinConfigurations = {
         "current" = darwin.lib.darwinSystem rec {
-          system = "aarch64-darwin";
+          system = "aarch64-darwin"; # or "x86_64-darwin"
 
           modules = [
             {
