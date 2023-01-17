@@ -9,7 +9,7 @@ A nix overlay for bleeding edge Emacs on Darwin (the heart of macOS).
 This overlay provides a package =emacsGit= which is:
 + built from the latest =master= branch.
 + patched with [[https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches][patches from homebrew-emacs-plus]].
-+ embellished by [[https://github.com/d12frosted/homebrew-emacs-plus/issues/419#issuecomment-966735773][icon provided by memeplex]].
++ embellished by [[./overlays/icons/memeplex-wide.png][icon provided by memplex]] ([[https://github.com/d12frosted/homebrew-emacs-plus/issues/419#issuecomment-966735773][original post]]).
 
 #+begin_quote
 And, this is the only package provided by this overlay.
