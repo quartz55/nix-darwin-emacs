@@ -94,34 +94,23 @@ let
                 /usr/bin/codesign -s - -f $out/lib/${lib drv}
               '';
               linkerFlag = drv: "-l" + libName drv;
-              plugins = with self.pkgs.tree-sitter-grammars; [
-                tree-sitter-elixir
-                tree-sitter-heex
-                tree-sitter-eex
 
-                tree-sitter-css
-                tree-sitter-javascript
-                tree-sitter-typescript
-                tree-sitter-tsx
+              # Expose all the grammars provided by nixpkgs, such as:
+              #
+              # + pkgs.tree-sitter-grammars.tree-sitter-bash
+              # + pkgs.tree-sitter-grammars.tree-sitter-c
+              # + pkgs.tree-sitter-grammars.tree-sitter-elixir
+              # + ...
+              #
+              # Although Emacs doesn't support them all, that's fine.
+              plugins =
+                let
+                  pkgs = self.pkgs;
+                  lib = pkgs.lib;
+                in
+                (lib.attrValues
+                  (lib.filterAttrs (n: v: (lib.hasPrefix "tree-sitter-" n)) pkgs.tree-sitter-grammars));
 
-                tree-sitter-json
-                tree-sitter-yaml
-                tree-sitter-toml
-
-                tree-sitter-bash
-                tree-sitter-c
-                tree-sitter-c-sharp
-                tree-sitter-cmake
-                tree-sitter-cpp
-                tree-sitter-go
-                tree-sitter-gomod
-                tree-sitter-java
-                tree-sitter-python
-                tree-sitter-ruby
-                tree-sitter-rust
-
-                tree-sitter-dockerfile
-              ];
               tree-sitter-grammars = super.runCommandCC "tree-sitter-grammars" { }
                 (super.lib.concatStringsSep "\n" ([ "mkdir -p $out/lib" ] ++ (map linkCmd plugins)));
             in
