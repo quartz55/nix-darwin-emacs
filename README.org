@@ -10,7 +10,7 @@ This overlay provides a package =emacsGit= which is:
 + built from the latest =master= branch.
 + patched with [[https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches][patches from homebrew-emacs-plus]].
 + embellished by [[./overlays/icons/memeplex-wide.png][icon provided by memplex]] ([[https://github.com/d12frosted/homebrew-emacs-plus/issues/419#issuecomment-966735773][original post]]).
-+ linked to all the =pkgs.tree-sitter-grammars.tree-sitter-*= packages. (even though Emacs doesn't yet support all the corresponding ~-ts-mode~)
++ with all the =pkgs.tree-sitter-grammars.tree-sitter-*= packages linked. (even though Emacs doesn't yet support all the corresponding ~-ts-mode~)
 
 #+begin_quote
 And, this is the only package provided by this overlay.
