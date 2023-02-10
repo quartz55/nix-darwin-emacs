@@ -10,7 +10,6 @@ This overlay provides a package =emacsGit= which is:
 + built from the latest =master= branch.
 + patched with [[https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches][patches from homebrew-emacs-plus]].
 + embellished by [[./overlays/icons/memeplex-wide.png][icon provided by memplex]] ([[https://github.com/d12frosted/homebrew-emacs-plus/issues/419#issuecomment-966735773][original post]]).
-+ with all the =pkgs.tree-sitter-grammars.tree-sitter-*= packages linked. (even though Emacs doesn't yet support all the corresponding ~-ts-mode~)
 
 #+begin_quote
 And, this is the only package provided by this overlay.
@@ -86,6 +85,11 @@ $ ls ./result
     };
 }
 #+end_src
+
+* Overriding ~treeSitterPlugins~ attr
+By default, the =emacsGit= package links all the =pkgs.tree-sitter-grammars.tree-sitter-*= packages, even though Emacs doesn't yet support all the corresponding ~-ts-mode~.
+
+If you don't like it, you can try to override the ~treeSitterPlugins~ attr of ~emacsGit~.
 
 * Extra library functionality
 This overlay comes with extra functions to generate an Emacs closure from various types of dependency declaration. (These are abstractions on top of =emacsWithPackages=.)
