@@ -10,7 +10,7 @@ let
       super.emacs
       ([
 
-        (drv: drv.override ({ srcRepo = true; } // args))
+        (drv: drv.override ({ srcRepo = true; } // builtins.removeAttrs args [ "treeSitterPlugins" ]))
 
         (
           drv: drv.overrideAttrs (
@@ -95,21 +95,7 @@ let
               '';
               linkerFlag = drv: "-l" + libName drv;
 
-              # Expose all the grammars provided by nixpkgs, such as:
-              #
-              # + pkgs.tree-sitter-grammars.tree-sitter-bash
-              # + pkgs.tree-sitter-grammars.tree-sitter-c
-              # + pkgs.tree-sitter-grammars.tree-sitter-elixir
-              # + ...
-              #
-              # Although Emacs doesn't support them all, that's fine.
-              plugins =
-                let
-                  pkgs = self.pkgs;
-                  lib = pkgs.lib;
-                in
-                (lib.attrValues
-                  (lib.filterAttrs (n: v: (lib.hasPrefix "tree-sitter-" n)) pkgs.tree-sitter-grammars));
+              plugins = args.treeSitterPlugins;
 
               tree-sitter-grammars = super.runCommandCC "tree-sitter-grammars" { }
                 (super.lib.concatStringsSep "\n" ([ "mkdir -p $out/lib" ] ++ (map linkCmd plugins)));
@@ -122,11 +108,28 @@ let
           )
         )
       ]);
+
+  # Expose all the grammars provided by nixpkgs, such as:
+  #
+  # + pkgs.tree-sitter-grammars.tree-sitter-bash
+  # + pkgs.tree-sitter-grammars.tree-sitter-c
+  # + pkgs.tree-sitter-grammars.tree-sitter-elixir
+  # + ...
+  #
+  # Although Emacs doesn't support them all, that's fine.
+  defaultTreeSitterPlugins =
+    let
+      pkgs = self.pkgs;
+      lib = pkgs.lib;
+    in
+    (lib.attrValues
+      (lib.filterAttrs (n: v: (lib.hasPrefix "tree-sitter-" n)) pkgs.tree-sitter-grammars));
 in
 {
-  emacsGit = mkGitEmacs "emacs-git" ../repos/emacs/emacs-master.json {
+  emacsGit = super.lib.makeOverridable (mkGitEmacs "emacs-git" ../repos/emacs/emacs-master.json) {
     withSQLite3 = true;
     withWebP = true;
+    treeSitterPlugins = defaultTreeSitterPlugins;
   };
 
   emacsWithPackagesFromUsePackage = import ../elisp.nix { pkgs = self; };
