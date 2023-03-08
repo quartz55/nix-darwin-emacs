@@ -21,8 +21,6 @@ let
 
               # https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches
               patches = [
-                ./patches/no-frame-refocus-cocoa.patch
-
                 # GNU Emacs's main role is an AXTextField instead of AXWindow, it has to be fixed manually.
                 ./patches/fix-window-role.patch
 
