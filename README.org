@@ -157,8 +157,8 @@ For example, =emacsWithPackagesFromUsePackage= adds packages which are required 
       ];
 
       # Optionally override derivations.
-      override = epkgs: epkgs // {
-        weechat = epkgs.melpaPackages.weechat.overrideAttrs(old: {
+      override = final: prev // {
+        weechat = prev.melpaPackages.weechat.overrideAttrs(old: {
           patches = [ ./weechat-el.patch ];
         });
       };

@@ -15,7 +15,7 @@ in
 , alwaysTangle ? false
 , extraEmacsPackages ? epkgs: [ ]
 , package ? pkgs.emacsGit
-, override ? (epkgs: epkgs)
+, override ? (self: super: { })
 }:
 let
   configType = config:
@@ -41,16 +41,20 @@ let
     inherit configText isOrgModeFile alwaysTangle;
     alwaysEnsure = false;
   };
-  emacsPackages = pkgs.emacsPackagesFor package;
+  emacsPackages = (pkgs.emacsPackagesFor package).overrideScope' (self: super:
+    # for backward compatibility: override was a function with one parameter
+    if builtins.isFunction (override super)
+    then override self super
+    else override super
+  );
   emacsWithPackages = emacsPackages.emacsWithPackages;
   mkPackageError = name:
     throw "Emacs package ${name}, declared wanted with use-package, not found." null;
 in
 emacsWithPackages (epkgs:
 let
-  overridden = override epkgs;
-  usePkgs = map (name: overridden.${name} or (mkPackageError name)) packages;
-  extraPkgs = extraEmacsPackages overridden;
+  usePkgs = map (name: epkgs.${name} or (mkPackageError name)) packages;
+  extraPkgs = extraEmacsPackages epkgs;
   defaultInitFilePkg =
     if !((builtins.isBool defaultInitFile) || (lib.isDerivation defaultInitFile))
     then throw "defaultInitFile must be bool or derivation"
