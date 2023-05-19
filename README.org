@@ -106,9 +106,10 @@ This overlay comes with extra functions to generate an Emacs closure from variou
 For example, =emacsWithPackagesFromUsePackage= adds packages which are required in a user's config via =use-package=.
 
 #+begin_src nix
+{ pkgs, ... }:
 {
   environment.systemPackages = [
-    (emacsWithPackagesFromUsePackage {
+    (pkgs.emacsWithPackagesFromUsePackage {
       # Emacs config file.
       #
       # Supported formats:
