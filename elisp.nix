@@ -14,7 +14,7 @@ in
   # emulate `#+PROPERTY: header-args:emacs-lisp :tangle yes`
 , alwaysTangle ? false
 , extraEmacsPackages ? epkgs: [ ]
-, package ? pkgs.emacsGit
+, package ? pkgs.emacs-darwin
 , override ? (self: super: { })
 }:
 let

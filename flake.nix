@@ -24,8 +24,7 @@
         };
       in
       {
-        packages.default = pkgs.emacsGit;
+        packages.default = pkgs.emacs-darwin;
       }
     ));
-
 }

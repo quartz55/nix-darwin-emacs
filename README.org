@@ -1,7 +1,7 @@
 #+TITLE: nix-darwin-emacs
 
 #+begin_quote
-A nix overlay for bleeding edge Emacs on Darwin (the heart of macOS).
+A nix overlay for nearly stable Emacs on Darwin (the heart of macOS).
 #+end_quote
 
 * Previews
@@ -14,9 +14,9 @@ This screenshot demonstrates:
 #+end_quote
 
 * About this overlay
-** bleeding edge Emacs
-This overlay provides a package =emacsGit= which is:
-+ built from the latest =master= branch.
+** nearly stable Emacs
+This overlay provides a package =emacs-darwin= which is:
++ built from the latest emacs package in nixpkgs.
 + patched with [[https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches][patches from homebrew-emacs-plus]].
 + embellished by [[./overlays/icons/memeplex-wide.png][icon provided by memplex]] ([[https://github.com/d12frosted/homebrew-emacs-plus/issues/419#issuecomment-966735773][original post]]).
 
@@ -95,10 +95,8 @@ $ ls ./result
 }
 #+end_src
 
-* Overriding ~treeSitterPlugins~ attr
-By default, the =emacsGit= package links all the =pkgs.tree-sitter-grammars.tree-sitter-*= packages, even though Emacs doesn't yet support all the corresponding ~-ts-mode~.
-
-If you don't like it, you can try to override the ~treeSitterPlugins~ attr of ~emacsGit~.
+* Treesitter
+By default, the =emacs-darwin= package links all the =pkgs.tree-sitter-grammars.tree-sitter-*= packages, even though Emacs doesn't yet support all the corresponding ~-ts-mode~.
 
 * Extra library functionality
 This overlay comes with extra functions to generate an Emacs closure from various types of dependency declaration. (These are abstractions on top of =emacsWithPackages=.)
@@ -137,8 +135,8 @@ For example, =emacsWithPackagesFromUsePackage= adds packages which are required 
       #   };
       defaultInitFile = true;
 
-      # Package is optional, defaults to pkgs.emacsGit
-      package = pkgs.emacsGit;
+      # Package is optional, defaults to pkgs.emacs-darwin
+      package = pkgs.emacs-darwin;
 
       # By default emacsWithPackagesFromUsePackage will only pull in
       # packages with `:ensure`, `:ensure t` or `:ensure <package name>`.
