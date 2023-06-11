@@ -2,7 +2,7 @@
   description = "A nix overlay for bleeding edge Emacs on macOS.";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-22.11-darwin";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-23.05-darwin";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
