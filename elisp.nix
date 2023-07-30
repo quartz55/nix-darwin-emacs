@@ -11,6 +11,8 @@ in
 { config
   # bool to use the value of config or a derivation whose name is default.el
 , defaultInitFile ? false
+  # emulate `use-package-always-ensure` behavior (defaulting to false)
+, alwaysEnsure ? false
   # emulate `#+PROPERTY: header-args:emacs-lisp :tangle yes`
 , alwaysTangle ? false
 , extraEmacsPackages ? epkgs: [ ]
@@ -38,8 +40,7 @@ let
     else throw "Unsupported type for config: \"${type}\"";
 
   packages = parse.parsePackagesFromUsePackage {
-    inherit configText isOrgModeFile alwaysTangle;
-    alwaysEnsure = false;
+    inherit configText isOrgModeFile alwaysTangle alwaysEnsure;
   };
   emacsPackages = (pkgs.emacsPackagesFor package).overrideScope' (self: super:
     # for backward compatibility: override was a function with one parameter
