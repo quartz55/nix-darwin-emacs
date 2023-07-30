@@ -1,5 +1,5 @@
 {
-  description = "A nix overlay for bleeding edge Emacs on macOS.";
+  description = "A nix overlay for nearly stable Emacs on Darwin.";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-23.05-darwin";
