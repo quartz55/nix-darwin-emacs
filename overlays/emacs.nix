@@ -19,14 +19,14 @@ let
           old: {
             name = "${namePrefix}-${repoMeta.version}";
             inherit (repoMeta) version;
-            src = fetcher (builtins.removeAttrs repoMeta [ "type" "version" ]);
+            src = fetcher (builtins.removeAttrs repoMeta [ "type" "version" "branch" ]);
 
             patches = [ ];
 
             postPatch = old.postPatch + ''
               substituteInPlace lisp/loadup.el \
               --replace '(emacs-repository-get-version)' '"${repoMeta.rev}"' \
-              --replace '(emacs-repository-get-branch)' '"master"'
+              --replace '(emacs-repository-get-branch)' '"${repoMeta.branch}"'
             '';
           }
         ))

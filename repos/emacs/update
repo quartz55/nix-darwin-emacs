@@ -20,7 +20,14 @@ function update_savannah_branch() {
 
     sanitized_output=$(echo "$output" | sed s/"\/"/"_"/)
     digest=$(nix-prefetch-url --unpack "https://git.savannah.gnu.org/cgit/emacs.git/snapshot/emacs-${commit_sha}.tar.gz")
-    echo "{\"type\": \"savannah\", \"repo\": \"emacs\", \"rev\": \"${commit_sha}\", \"sha256\": \"${digest}\", \"version\": \"${version_number}\"}" > "$sanitized_output".json
+    echo "{
+  \"type\": \"savannah\",
+  \"repo\": \"emacs\",
+  \"branch\": \"${branch}\",
+  \"rev\": \"${commit_sha}\",
+  \"sha256\": \"${digest}\",
+  \"version\": \"${version_number}\"
+}" > "$sanitized_output".json
 }
 
 update_savannah_branch master unstable
