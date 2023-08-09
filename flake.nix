@@ -24,7 +24,8 @@
         };
       in
       {
-        packages.default = pkgs.emacs-darwin;
+        packages.emacs-unstable = pkgs.emacs-unstable;
+        packages.emacs-29 = pkgs.emacs-29;
       }
     ));
 }

@@ -9,7 +9,7 @@ let
 in
 { packageElisp
 , extraEmacsPackages ? epkgs: [ ]
-, package ? pkgs.emacs-darwin
+, package ? pkgs.emacs-unstable
 , override ? (self: super: { })
 }:
 let
