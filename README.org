@@ -1,7 +1,7 @@
 #+TITLE: nix-darwin-emacs
 
 #+begin_quote
-A nix overlay for nearly stable Emacs on Darwin (the heart of macOS).
+A nix overlay for bleeding edge and nearly stable Emacs on Darwin (the heart of macOS).
 #+end_quote
 
 * Previews
@@ -14,17 +14,13 @@ This screenshot demonstrates:
 #+end_quote
 
 * About this overlay
-** nearly stable Emacs
-This overlay provides a package =emacs-darwin= which is:
-+ built from the latest emacs package in nixpkgs.
+** Emacs
+This overlay provides packages =emacs-*= which is:
++ built from the emacs git repo directly
 + patched with [[https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches][patches from homebrew-emacs-plus]].
 + embellished by [[./overlays/icons/memeplex-wide.png][icon provided by memplex]] ([[https://github.com/d12frosted/homebrew-emacs-plus/issues/419#issuecomment-966735773][original post]]).
 
-#+begin_quote
-And, this is the only package provided by this overlay.
-#+end_quote
-
-** other Emacs packages
+** Emacs packages
 This overlay doesn't provide any other Emacs packages, such as:
 + =melpaStablePackages.*=
 + =melpaPackages.*=
@@ -36,7 +32,10 @@ If you need them, try to use overlay ~package~ provided by [[https://github.com/
 * Quick Start
 First, build it:
 #+begin_src sh
-$ nix build .#
+$ nix build .#emacs-unstable
+
+# or
+$ nix build .#emacs-29
 #+end_src
 
 Then, explore the directory =result=:
@@ -96,7 +95,7 @@ $ ls ./result
 #+end_src
 
 * Treesitter
-By default, the =emacs-darwin= package links all the =pkgs.tree-sitter-grammars.tree-sitter-*= packages, even though Emacs doesn't yet support all the corresponding ~-ts-mode~.
+By default, the =emacs-*= package links all the =pkgs.tree-sitter-grammars.tree-sitter-*= packages, even though Emacs doesn't yet support all the corresponding ~-ts-mode~.
 
 * Extra library functionality
 This overlay comes with extra functions to generate an Emacs closure from various types of dependency declaration. (These are abstractions on top of =emacsWithPackages=.)
@@ -135,8 +134,8 @@ For example, =emacsWithPackagesFromUsePackage= adds packages which are required 
       #   };
       defaultInitFile = true;
 
-      # Package is optional, defaults to pkgs.emacs-darwin
-      package = pkgs.emacs-darwin;
+      # Package is optional, defaults to pkgs.emacs-unstable
+      package = pkgs.emacs-unstable;
 
       # By default emacsWithPackagesFromUsePackage will only pull in
       # packages with `:ensure`, `:ensure t` or `:ensure <package name>`.
