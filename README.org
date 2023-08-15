@@ -18,7 +18,7 @@ This screenshot demonstrates:
 This overlay provides packages =emacs-*= which is:
 + built from the emacs git repo directly
 + patched with [[https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches][patches from homebrew-emacs-plus]].
-+ embellished by [[./overlays/icons/memeplex-wide.png][icon provided by memplex]] ([[https://github.com/d12frosted/homebrew-emacs-plus/issues/419#issuecomment-966735773][original post]]).
++ embellished by [[https://github.com/SavchenkoValeriy/emacs-icons][icon created by Valeriy Savchenko]].
 
 ** Emacs packages
 This overlay doesn't provide any other Emacs packages, such as:
