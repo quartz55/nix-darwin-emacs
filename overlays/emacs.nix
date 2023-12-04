@@ -70,6 +70,7 @@ let
             libName = drv: super.lib.removeSuffix "-grammar" drv.pname;
             lib = drv: ''lib${libName drv}.dylib'';
             linkCmd = drv: ''
+              echo "patching ./parser with id $out/lib/${lib drv}"
               cp ${drv}/parser .
               chmod +w ./parser
               install_name_tool -id $out/lib/${lib drv} ./parser
