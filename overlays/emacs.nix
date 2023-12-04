@@ -78,7 +78,22 @@ let
               ${self.pkgs.darwin.sigtool}/bin/codesign -s - -f $out/lib/${lib drv}
             '';
 
-            allGrammars = super.pkgs.tree-sitter.allGrammars;
+            allGrammars = map
+              (grammar:
+                grammar.overrideAttrs (prev: {
+                  env = (prev.env or { }) // {
+                    # Ensure enough space was given, which is useful when updating the id of shared lib.
+                    #
+                    # Or, an error might be raised:
+                    #
+                    #   error: install_name_tool: changing install names or rpaths can't be redone for: ./parser
+                    #   (for architecture x86_64) because larger updated load commands do not fit (the program
+                    #   must be relinked, and you may need to use -headerpad or -headerpad_max_install_names)
+                    #
+                    NIX_LDFLAGS = "-headerpad_max_install_names";
+                  };
+                }))
+              super.pkgs.tree-sitter.allGrammars;
             tree-sitter-grammars = super.runCommandCC "tree-sitter-grammars" { }
               (super.lib.concatStringsSep "\n" ([ "mkdir -p $out/lib" ] ++ (map linkCmd allGrammars)));
           in
