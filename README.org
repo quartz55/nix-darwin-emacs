@@ -4,15 +4,6 @@
 A nix overlay for bleeding edge and nearly stable Emacs on Darwin (the heart of macOS).
 #+end_quote
 
-* Previews
-[[file:./screenshots/preview.png]]
-
-#+begin_quote
-This screenshot demonstrates:
-+ the =round-undecorated-frame.patch=
-+ the customized application icon
-#+end_quote
-
 * About this overlay
 ** Emacs
 This overlay provides packages =emacs-*= which is:
