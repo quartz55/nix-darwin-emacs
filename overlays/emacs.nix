@@ -138,9 +138,6 @@ in
       ./patches-30/poll.patch
       ./patches-30/system-appearance.patch
       ./patches-30/round-undecorated-frame.patch
-
-      # patches https://github.com/nix-community/emacs-overlay
-      ./patches-30/bytecomp-revert.patch
     ])
     {
       withSQLite3 = true;
