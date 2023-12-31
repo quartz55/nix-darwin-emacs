@@ -133,11 +133,14 @@ in
 {
   emacs-unstable = super.lib.makeOverridable
     (mkEmacs "emacs-unstable" ../repos/emacs/unstable.json [
-      # patches from https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches
+      # patches from https://github.com/d12frosted/homebrew-emacs-plus
       ./patches-30/fix-window-role.patch
       ./patches-30/poll.patch
       ./patches-30/system-appearance.patch
       ./patches-30/round-undecorated-frame.patch
+
+      # patches https://github.com/nix-community/emacs-overlay
+      ./patches-30/bytecomp-revert.patch
     ])
     {
       withSQLite3 = true;
@@ -147,7 +150,7 @@ in
 
   emacs-29 = super.lib.makeOverridable
     (mkEmacs "emacs-29" ../repos/emacs/29.json [
-      # patches from https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches
+      # patches from https://github.com/d12frosted/homebrew-emacs-plus
       ./patches-29/fix-window-role.patch
       ./patches-29/poll.patch
       ./patches-29/system-appearance.patch
