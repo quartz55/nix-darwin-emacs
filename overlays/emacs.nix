@@ -1,6 +1,6 @@
 self: super:
 let
-  mkEmacs = namePrefix: repoMetaFile: { ... }@args:
+  mkEmacs = namePrefix: repoMetaFile: patches: { ... }@args:
     let
       repoMeta = super.lib.importJSON repoMetaFile;
       fetcher =
@@ -98,20 +98,7 @@ let
               (super.lib.concatStringsSep "\n" ([ "mkdir -p $out/lib" ] ++ (map linkCmd allGrammars)));
           in
           {
-            patches = old.patches ++
-              # patches from https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches
-              [
-                # fix role of window
-                # GNU Emacs's main role is an AXTextField instead of AXWindow, it has to be fixed manually.
-                ./patches/fix-window-role.patch
-
-                # better appearance
-                ./patches/system-appearance.patch
-                ./patches/round-undecorated-frame.patch
-
-                # misc
-                ./patches/poll.patch
-              ];
+            patches = old.patches ++ patches;
             buildInputs = old.buildInputs ++ [ tree-sitter-grammars ];
             buildFlags = "LDFLAGS=-Wl,-rpath,${super.lib.makeLibraryPath [tree-sitter-grammars]}";
 
@@ -144,17 +131,33 @@ let
       ];
 in
 {
-  emacs-unstable = super.lib.makeOverridable (mkEmacs "emacs-unstable" ../repos/emacs/unstable.json) {
-    withSQLite3 = true;
-    withTreeSitter = true;
-    withWebP = true;
-  };
+  emacs-unstable = super.lib.makeOverridable
+    (mkEmacs "emacs-unstable" ../repos/emacs/unstable.json [
+      # patches from https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches
+      ./patches-30/fix-window-role.patch
+      ./patches-30/poll.patch
+      ./patches-30/system-appearance.patch
+      ./patches-30/round-undecorated-frame.patch
+    ])
+    {
+      withSQLite3 = true;
+      withTreeSitter = true;
+      withWebP = true;
+    };
 
-  emacs-29 = super.lib.makeOverridable (mkEmacs "emacs-29" ../repos/emacs/29.json) {
-    withSQLite3 = true;
-    withTreeSitter = true;
-    withWebP = true;
-  };
+  emacs-29 = super.lib.makeOverridable
+    (mkEmacs "emacs-29" ../repos/emacs/29.json [
+      # patches from https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches
+      ./patches-29/fix-window-role.patch
+      ./patches-29/poll.patch
+      ./patches-29/system-appearance.patch
+      ./patches-29/round-undecorated-frame.patch
+    ])
+    {
+      withSQLite3 = true;
+      withTreeSitter = true;
+      withWebP = true;
+    };
 
   emacsWithPackagesFromUsePackage = import ../elisp.nix { pkgs = self; };
 
