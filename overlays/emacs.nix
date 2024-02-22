@@ -25,8 +25,8 @@ let
 
             postPatch = old.postPatch + ''
               substituteInPlace lisp/loadup.el \
-              --replace '(emacs-repository-get-version)' '"${repoMeta.rev}"' \
-              --replace '(emacs-repository-get-branch)' '"${repoMeta.branch}"'
+              --replace-warn '(emacs-repository-get-version)' '"${repoMeta.rev}"' \
+              --replace-warn '(emacs-repository-get-branch)' '"${repoMeta.branch}"'
             '';
           }
         ))
@@ -54,7 +54,7 @@ let
                     ])));
                 in
                 ''
-                  substituteInPlace lisp/emacs-lisp/comp.el --replace \
+                  substituteInPlace lisp/emacs-lisp/comp.el --replace-warn \
                     "(defcustom comp-libgccjit-reproducer nil" \
                     "(setq native-comp-driver-options '(${backendPath}))
                      (defcustom comp-libgccjit-reproducer nil"
