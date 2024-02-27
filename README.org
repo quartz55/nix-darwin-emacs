@@ -23,10 +23,10 @@ If you need them, try to use overlay ~package~ provided by [[https://github.com/
 * Quick Start
 First, build it:
 #+begin_src sh
-$ nix build .#emacs-unstable
+$ nix build .#emacs-29
 
 # or
-$ nix build .#emacs-29
+$ nix build .#emacs-unstable
 #+end_src
 
 Then, explore the directory =result=:
@@ -38,10 +38,10 @@ $ ls ./result
 #+begin_src nix
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-22.11-darwin";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-23.11-darwin"; # or use newer branch
 
     darwin = {
-      url = "github:lnl7/nix-darwin/master";
+      url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -126,7 +126,7 @@ For example, =emacsWithPackagesFromUsePackage= adds packages which are required 
       defaultInitFile = true;
 
       # Package is optional, defaults to pkgs.emacs-unstable
-      package = pkgs.emacs-unstable;
+      package = pkgs.emacs-29;
 
       # By default emacsWithPackagesFromUsePackage will only pull in
       # packages with `:ensure`, `:ensure t` or `:ensure <package name>`.
