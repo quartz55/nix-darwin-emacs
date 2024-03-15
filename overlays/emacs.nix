@@ -8,12 +8,15 @@ let
           super.fetchFromSavannah
         else
           throw "Unknown repo type ${repoMeta.type}";
+
+      treeSitterGrammarsAttrName = "treeSitterGrammars";
+      treeSitterGrammars = args."${treeSitterGrammarsAttrName}" or super.pkgs.tree-sitter.allGrammars;
     in
     builtins.foldl'
       (drv: fn: fn drv)
       super.emacs
       [
-        (drv: drv.override ({ srcRepo = true; } // args))
+        (drv: drv.override ({ srcRepo = true; } // (builtins.removeAttrs args [ treeSitterGrammarsAttrName ])))
 
         (drv: drv.overrideAttrs (
           old: {
@@ -25,8 +28,8 @@ let
 
             postPatch = old.postPatch + ''
               substituteInPlace lisp/loadup.el \
-              --replace-fail '(emacs-repository-get-version)' '"${repoMeta.rev}"' \
-              --replace-fail '(emacs-repository-get-branch)' '"${repoMeta.branch}"'
+              --replace '(emacs-repository-get-version)' '"${repoMeta.rev}"' \
+              --replace '(emacs-repository-get-branch)' '"${repoMeta.branch}"'
             '';
           }
         ))
@@ -78,7 +81,7 @@ let
               ${self.pkgs.darwin.sigtool}/bin/codesign -s - -f $out/lib/${lib drv}
             '';
 
-            allGrammars = map
+            overridedTreeSitterGrammars = map
               (grammar:
                 grammar.overrideAttrs (prev: {
                   env = (prev.env or { }) // {
@@ -93,14 +96,14 @@ let
                     NIX_LDFLAGS = "-headerpad_max_install_names";
                   };
                 }))
-              super.pkgs.tree-sitter.allGrammars;
-            tree-sitter-grammars = super.runCommandCC "tree-sitter-grammars" { }
-              (super.lib.concatStringsSep "\n" ([ "mkdir -p $out/lib" ] ++ (map linkCmd allGrammars)));
+              treeSitterGrammars;
+            supportedTreeSitterGrammars = super.runCommandCC "tree-sitter-grammars" { }
+              (super.lib.concatStringsSep "\n" ([ "mkdir -p $out/lib" ] ++ (map linkCmd overridedTreeSitterGrammars)));
           in
           {
             patches = old.patches ++ patches;
-            buildInputs = old.buildInputs ++ [ tree-sitter-grammars ];
-            buildFlags = "LDFLAGS=-Wl,-rpath,${super.lib.makeLibraryPath [tree-sitter-grammars]}";
+            buildInputs = old.buildInputs ++ [ supportedTreeSitterGrammars ];
+            buildFlags = "LDFLAGS=-Wl,-rpath,${super.lib.makeLibraryPath [supportedTreeSitterGrammars]}";
 
             postInstall = old.postInstall + ''
               cp ${./icons/Emacs.icns} $out/Applications/Emacs.app/Contents/Resources/Emacs.icns

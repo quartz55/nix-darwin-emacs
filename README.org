@@ -88,6 +88,17 @@ $ ls ./result
 * Treesitter
 By default, the =emacs-*= package links all the =pkgs.tree-sitter-grammars.tree-sitter-*= packages, even though Emacs doesn't yet support all the corresponding ~-ts-mode~.
 
+If you want to specify the list of tree-sitter grammars, try:
+
+#+begin_src nix
+pkgs.emacs-29.override {
+  treeSitterGrammars = with pkgs.tree-sitters-grammars; [
+    tree-sitter-c
+    # ...
+  ]
+}
+#+end_src
+
 * Extra library functionality
 This overlay comes with extra functions to generate an Emacs closure from various types of dependency declaration. (These are abstractions on top of =emacsWithPackages=.)
 
