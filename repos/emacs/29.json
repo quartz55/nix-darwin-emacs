@@ -2,7 +2,7 @@
   "type": "savannah",
   "repo": "emacs",
   "branch": "emacs-29",
-  "rev": "db027a06976ee1bcbe6294e281bd5954dd1052ef",
-  "sha256": "1kc3l1hh54x5kszvagsi9fww4mpyz556b92fam7d7rbr8m4friz2",
-  "version": "20240312.0"
+  "rev": "b708e639d63f488a98c7416866665c16730b9e8f",
+  "sha256": "1q6hbh5biz8x0fbsa8npxhhjc30a895vqh24wxrphidlg9jxnkn3",
+  "version": "20240314.0"
 }
