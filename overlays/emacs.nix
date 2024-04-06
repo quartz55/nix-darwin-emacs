@@ -1,6 +1,6 @@
 self: super:
 let
-  mkEmacs = namePrefix: repoMetaFile: patches: { ... }@args:
+  mkEmacs = namePrefix: repoMetaFile: patches: { ... }:
     let
       repoMeta = super.lib.importJSON repoMetaFile;
       fetcher =
@@ -8,15 +8,12 @@ let
           super.fetchFromSavannah
         else
           throw "Unknown repo type ${repoMeta.type}";
-
-      treeSitterGrammarsAttrName = "treeSitterGrammars";
-      treeSitterGrammars = args."${treeSitterGrammarsAttrName}" or super.pkgs.tree-sitter.allGrammars;
     in
     builtins.foldl'
       (drv: fn: fn drv)
       super.emacs
       [
-        (drv: drv.override ({ srcRepo = true; } // (builtins.removeAttrs args [ treeSitterGrammarsAttrName ])))
+        (drv: drv.override ({ srcRepo = true; }))
 
         (drv: drv.overrideAttrs (
           old: {
@@ -66,45 +63,16 @@ let
           }
         ))
 
-        # link tree-sitter dependencies
+        # accept patches
         (drv: drv.overrideAttrs (
-          old:
-          let
-            libName = drv: super.lib.removeSuffix "-grammar" drv.pname;
-            lib = drv: ''lib${libName drv}.dylib'';
-            linkCmd = drv: ''
-              echo "patching ./parser with id $out/lib/${lib drv}"
-              cp ${drv}/parser .
-              chmod +w ./parser
-              install_name_tool -id $out/lib/${lib drv} ./parser
-              cp ./parser $out/lib/${lib drv}
-              ${self.pkgs.darwin.sigtool}/bin/codesign -s - -f $out/lib/${lib drv}
-            '';
-
-            overridedTreeSitterGrammars = map
-              (grammar:
-                grammar.overrideAttrs (prev: {
-                  env = (prev.env or { }) // {
-                    # Ensure enough space was given, which is useful when updating the id of shared lib.
-                    #
-                    # Or, an error might be raised:
-                    #
-                    #   error: install_name_tool: changing install names or rpaths can't be redone for: ./parser
-                    #   (for architecture x86_64) because larger updated load commands do not fit (the program
-                    #   must be relinked, and you may need to use -headerpad or -headerpad_max_install_names)
-                    #
-                    NIX_LDFLAGS = "-headerpad_max_install_names";
-                  };
-                }))
-              treeSitterGrammars;
-            supportedTreeSitterGrammars = super.runCommandCC "tree-sitter-grammars" { }
-              (super.lib.concatStringsSep "\n" ([ "mkdir -p $out/lib" ] ++ (map linkCmd overridedTreeSitterGrammars)));
-          in
-          {
+          old: {
             patches = old.patches ++ patches;
-            buildInputs = old.buildInputs ++ [ supportedTreeSitterGrammars ];
-            buildFlags = "LDFLAGS=-Wl,-rpath,${super.lib.makeLibraryPath [supportedTreeSitterGrammars]}";
+          }
+        ))
 
+        # replace default icon
+        (drv: drv.overrideAttrs (
+          old: {
             postInstall = old.postInstall + ''
               cp ${./icons/Emacs.icns} $out/Applications/Emacs.app/Contents/Resources/Emacs.icns
             '';
