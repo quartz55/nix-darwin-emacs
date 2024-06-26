@@ -64,6 +64,7 @@ function update_github_repo() {
   \"type\": \"github\",
   \"owner\": \"${owner}\",
   \"repo\": \"${repo}\",
+  \"branch\": \"${branch}\",
   \"rev\": \"${commit_sha}\",
   \"sha256\": \"${digest}\",
   \"version\": \"${version_number}\"
