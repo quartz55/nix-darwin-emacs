@@ -2,6 +2,7 @@
   "type": "github",
   "owner": "emacs-mirror",
   "repo": "emacs",
+  "branch": "master",
   "rev": "b9da5ee06f2e4ae807336dd6a641ae797831d097",
   "sha256": "0mfg1sdckfvbqgfqdy3qnq893ybx57d6gvhidbxq57zjgpnigs5q",
   "version": "20240625.0"
