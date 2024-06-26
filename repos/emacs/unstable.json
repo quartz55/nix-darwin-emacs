@@ -1,8 +1,8 @@
 {
-  "type": "savannah",
+  "type": "github",
+  "owner": "emacs-mirror",
   "repo": "emacs",
-  "branch": "master",
-  "rev": "a300db7ad4a16dc39bf1793c2e61f75145337ec6",
-  "sha256": "0damv5cjrgij5yl30cwpqkrdnfiml6ngsq58dxikmni1hy6mw57n",
-  "version": "20240611.0"
+  "rev": "b9da5ee06f2e4ae807336dd6a641ae797831d097",
+  "sha256": "0mfg1sdckfvbqgfqdy3qnq893ybx57d6gvhidbxq57zjgpnigs5q",
+  "version": "20240625.0"
 }
