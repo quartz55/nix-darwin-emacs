@@ -9,7 +9,9 @@ jobs:
   refresh-overlay:
     name: Refresh inputs
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'c4710n'
+    if: github.repository_owner == 'nix-giant'
+    permissions:
+      contents: write
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
