@@ -6,6 +6,8 @@ let
       fetcher =
         if repoMeta.type == "savannah" then
           super.fetchFromSavannah
+        else if repoMeta.type == "github" then
+          super.fetchFromGitHub
         else
           throw "Unknown repo type ${repoMeta.type}";
     in
